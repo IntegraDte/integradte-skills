@@ -1,0 +1,61 @@
+{
+  "Documento": {
+    "ID": "F33T1002",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 33,
+        "Folio": 1002,
+        "FchEmis": "2026-03-05",
+        "FmaPago": 1,
+        "MedioPago": "TR",
+        "TermPagoGlosa": "Contado"
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "76123456-7",
+        "RznSocRecep": "CLIENTE DE PRUEBA SPA",
+        "GiroRecep": "SERVICIOS EMPRESARIALES",
+        "DirRecep": "CALLE CLIENTE 456",
+        "CmnaRecep": "PUERTO MONTT",
+        "CiudadRecep": "PUERTO MONTT",
+        "CorreoRecep": "cliente@ejemplo.cl"
+      },
+      "Totales": {
+        "MntNeto": 100000,
+        "MntExe": 30000,
+        "TasaIVA": 19,
+        "IVA": 19000,
+        "MntTotal": 149000
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Servicio afecto",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 100000,
+        "MontoItem": 100000
+      },
+      {
+        "NroLinDet": 2,
+        "IndExe": 1,
+        "NmbItem": "Servicio exento",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 30000,
+        "MontoItem": 30000
+      }
+    ]
+  }
+}

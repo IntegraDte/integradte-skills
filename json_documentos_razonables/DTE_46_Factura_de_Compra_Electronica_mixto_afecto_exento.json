@@ -1,0 +1,59 @@
+{
+  "Documento": {
+    "ID": "FC46T4002",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 46,
+        "Folio": 4002,
+        "FchEmis": "2026-03-05",
+        "FmaPago": 1
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "76123456-7",
+        "RznSocRecep": "CLIENTE DE PRUEBA SPA",
+        "GiroRecep": "SERVICIOS EMPRESARIALES",
+        "DirRecep": "CALLE CLIENTE 456",
+        "CmnaRecep": "PUERTO MONTT",
+        "CiudadRecep": "PUERTO MONTT",
+        "CorreoRecep": "cliente@ejemplo.cl"
+      },
+      "Totales": {
+        "MntNeto": 70000,
+        "MntExe": 15000,
+        "TasaIVA": 19,
+        "IVA": 13300,
+        "MntTotal": 98300
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Compra afecta",
+        "QtyItem": 10,
+        "UnmdItem": "UN",
+        "PrcItem": 7000,
+        "MontoItem": 70000
+      },
+      {
+        "NroLinDet": 2,
+        "IndExe": 1,
+        "NmbItem": "Servicio exento asociado",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 15000,
+        "MontoItem": 15000
+      }
+    ]
+  }
+}

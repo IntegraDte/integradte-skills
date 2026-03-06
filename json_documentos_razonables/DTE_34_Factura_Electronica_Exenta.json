@@ -1,0 +1,48 @@
+{
+  "Documento": {
+    "ID": "F34T2001",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 34,
+        "Folio": 2001,
+        "FchEmis": "2026-03-05",
+        "FmaPago": 1
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "76123456-7",
+        "RznSocRecep": "CLIENTE DE PRUEBA SPA",
+        "GiroRecep": "SERVICIOS EMPRESARIALES",
+        "DirRecep": "CALLE CLIENTE 456",
+        "CmnaRecep": "PUERTO MONTT",
+        "CiudadRecep": "PUERTO MONTT",
+        "CorreoRecep": "cliente@ejemplo.cl"
+      },
+      "Totales": {
+        "MntExe": 85000,
+        "MntTotal": 85000
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "IndExe": 1,
+        "NmbItem": "Servicio exento",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 85000,
+        "MontoItem": 85000
+      }
+    ]
+  }
+}

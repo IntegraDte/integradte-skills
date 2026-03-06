@@ -1,0 +1,46 @@
+{
+  "Exportaciones": {
+    "ID": "EXP110T10001",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 110,
+        "Folio": 10001,
+        "FchEmis": "2026-03-05",
+        "FmaPagExp": 1
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "55555555-5",
+        "RznSocRecep": "CLIENTE EXTERIOR LLC",
+        "DirRecep": "742 MARKET ST",
+        "CmnaRecep": "MIAMI",
+        "CiudadRecep": "MIAMI",
+        "PaisRecep": "US"
+      },
+      "Totales": {
+        "MntExe": 250000,
+        "MntTotal": 250000
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Servicio exportado",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 250000,
+        "MontoItem": 250000
+      }
+    ]
+  }
+}

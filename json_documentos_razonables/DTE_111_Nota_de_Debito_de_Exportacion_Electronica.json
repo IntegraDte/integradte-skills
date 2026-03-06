@@ -1,0 +1,54 @@
+{
+  "Exportaciones": {
+    "ID": "EXP111T10002",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 111,
+        "Folio": 10002,
+        "FchEmis": "2026-03-05"
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "55555555-5",
+        "RznSocRecep": "CLIENTE EXTERIOR LLC",
+        "DirRecep": "742 MARKET ST",
+        "CmnaRecep": "MIAMI",
+        "CiudadRecep": "MIAMI",
+        "PaisRecep": "US"
+      },
+      "Totales": {
+        "MntExe": 30000,
+        "MntTotal": 30000
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Ajuste débito exportación",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 30000,
+        "MontoItem": 30000
+      }
+    ],
+    "Referencia": [
+      {
+        "NroLinRef": 1,
+        "TpoDocRef": "110",
+        "FolioRef": 10001,
+        "FchRef": "2026-03-01",
+        "RazonRef": "Aumento valor exportación"
+      }
+    ]
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "Documento": {
+    "ID": "GD52T5002",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 52,
+        "Folio": 5002,
+        "FchEmis": "2026-03-05",
+        "TipoDespacho": 1,
+        "IndTraslado": 1
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "76123456-7",
+        "RznSocRecep": "CLIENTE DE PRUEBA SPA",
+        "GiroRecep": "SERVICIOS EMPRESARIALES",
+        "DirRecep": "CALLE CLIENTE 456",
+        "CmnaRecep": "PUERTO MONTT",
+        "CiudadRecep": "PUERTO MONTT",
+        "CorreoRecep": "cliente@ejemplo.cl"
+      },
+      "Transporte": {
+        "RUTTrans": "11111111-1",
+        "Patente": "ABCD12",
+        "DirDest": "BODEGA CLIENTE 789",
+        "CmnaDest": "PUERTO MONTT",
+        "CiudadDest": "PUERTO MONTT"
+      },
+      "Totales": {
+        "MntNeto": 45000,
+        "MntExe": 10000,
+        "TasaIVA": 19,
+        "IVA": 8550,
+        "MntTotal": 63550
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Producto afecto",
+        "QtyItem": 5,
+        "UnmdItem": "UN",
+        "PrcItem": 9000,
+        "MontoItem": 45000
+      },
+      {
+        "NroLinDet": 2,
+        "IndExe": 1,
+        "NmbItem": "Producto exento",
+        "QtyItem": 2,
+        "UnmdItem": "UN",
+        "PrcItem": 5000,
+        "MontoItem": 10000
+      }
+    ]
+  }
+}

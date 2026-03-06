@@ -1,0 +1,68 @@
+{
+  "Documento": {
+    "ID": "ND56T6002",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 56,
+        "Folio": 6002,
+        "FchEmis": "2026-03-05"
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "76123456-7",
+        "RznSocRecep": "CLIENTE DE PRUEBA SPA",
+        "GiroRecep": "SERVICIOS EMPRESARIALES",
+        "DirRecep": "CALLE CLIENTE 456",
+        "CmnaRecep": "PUERTO MONTT",
+        "CiudadRecep": "PUERTO MONTT",
+        "CorreoRecep": "cliente@ejemplo.cl"
+      },
+      "Totales": {
+        "MntNeto": 20000,
+        "MntExe": 5000,
+        "TasaIVA": 19,
+        "IVA": 3800,
+        "MntTotal": 28800
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Ajuste afecto",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 20000,
+        "MontoItem": 20000
+      },
+      {
+        "NroLinDet": 2,
+        "IndExe": 1,
+        "NmbItem": "Ajuste exento",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 5000,
+        "MontoItem": 5000
+      }
+    ],
+    "Referencia": [
+      {
+        "NroLinRef": 1,
+        "TpoDocRef": "33",
+        "FolioRef": 1001,
+        "FchRef": "2026-03-01",
+        "CodRef": 1,
+        "RazonRef": "Aumento de valor"
+      }
+    ]
+  }
+}

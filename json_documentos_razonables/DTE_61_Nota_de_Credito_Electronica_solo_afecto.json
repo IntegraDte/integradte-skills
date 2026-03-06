@@ -1,0 +1,58 @@
+{
+  "Documento": {
+    "ID": "NC61T7001",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 61,
+        "Folio": 7001,
+        "FchEmis": "2026-03-05"
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "76123456-7",
+        "RznSocRecep": "CLIENTE DE PRUEBA SPA",
+        "GiroRecep": "SERVICIOS EMPRESARIALES",
+        "DirRecep": "CALLE CLIENTE 456",
+        "CmnaRecep": "PUERTO MONTT",
+        "CiudadRecep": "PUERTO MONTT",
+        "CorreoRecep": "cliente@ejemplo.cl"
+      },
+      "Totales": {
+        "MntNeto": 15000,
+        "TasaIVA": 19,
+        "IVA": 2850,
+        "MntTotal": 17850
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Descuento por devolución parcial",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 15000,
+        "MontoItem": 15000
+      }
+    ],
+    "Referencia": [
+      {
+        "NroLinRef": 1,
+        "TpoDocRef": "33",
+        "FolioRef": 1001,
+        "FchRef": "2026-03-01",
+        "CodRef": 1,
+        "RazonRef": "Anula o corrige monto"
+      }
+    ]
+  }
+}

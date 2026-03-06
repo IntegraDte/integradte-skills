@@ -1,0 +1,58 @@
+{
+  "Liquidacion": {
+    "ID": "L43T3002",
+    "Encabezado": {
+      "IdDoc": {
+        "TipoDTE": 43,
+        "Folio": 3002,
+        "FchEmis": "2026-03-05"
+      },
+      "Emisor": {
+        "RUTEmisor": "76859430-2",
+        "RznSoc": "INTEGRA FACTURACION SPA",
+        "GiroEmis": "DESARROLLO DE SOFTWARE Y SERVICIOS TECNOLOGICOS",
+        "Acteco": [
+          620100
+        ],
+        "DirOrigen": "AV. EJEMPLO 123 OFICINA 4",
+        "CmnaOrigen": "PUERTO MONTT",
+        "CiudadOrigen": "PUERTO MONTT"
+      },
+      "Receptor": {
+        "RUTRecep": "76123456-7",
+        "RznSocRecep": "CLIENTE DE PRUEBA SPA",
+        "GiroRecep": "SERVICIOS EMPRESARIALES",
+        "DirRecep": "CALLE CLIENTE 456",
+        "CmnaRecep": "PUERTO MONTT",
+        "CiudadRecep": "PUERTO MONTT",
+        "CorreoRecep": "cliente@ejemplo.cl"
+      },
+      "Totales": {
+        "MntNeto": 50000,
+        "MntExe": 12000,
+        "TasaIVA": 19,
+        "IVA": 9500,
+        "MntTotal": 71500
+      }
+    },
+    "Detalle": [
+      {
+        "NroLinDet": 1,
+        "NmbItem": "Comisión afecta",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 50000,
+        "MontoItem": 50000
+      },
+      {
+        "NroLinDet": 2,
+        "IndExe": 1,
+        "NmbItem": "Cargo exento",
+        "QtyItem": 1,
+        "UnmdItem": "UN",
+        "PrcItem": 12000,
+        "MontoItem": 12000
+      }
+    ]
+  }
+}
