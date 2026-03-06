@@ -34,6 +34,7 @@ Uso:
 3. Por defecto hace bump `patch`
 4. Si un commit incluye `[minor]` o `[major]`, usa ese bump para la versión siguiente
 5. Si el push solo cambia `README.md`, no crea release
+6. Si el push solo cambia archivos dentro de `.github/`, no crea release
 
 El workflow:
 
