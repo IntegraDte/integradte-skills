@@ -1,6 +1,6 @@
-# integrafacturacion-skills
+# integradte-skills
 
-Skill para ayudar a integrar [`integrafacturacion.cl`](https://api.integrafacturacion.cl/api/v1) con foco en:
+Skill para ayudar a integrar [`integradte.cl`](https://api.integradte.cl/api/v1) con foco en:
 - emisión y modificación de DTEs
 - consulta de documentos y estadísticas
 - carga de CAF y manejo de folios
@@ -12,7 +12,7 @@ Skill para ayudar a integrar [`integrafacturacion.cl`](https://api.integrafactur
 Puedes instalar la skill directamente desde GitHub con:
 
 ```bash
-npx skills add https://github.com/JoseLuis21/integrafacturacion-skills
+npx skills add https://github.com/JoseLuis21/integradte-skills
 ```
 
 ## Actualización
@@ -58,7 +58,7 @@ También puedes ejecutarlo manualmente desde `Actions > Release` si quieres forz
 
 Esta skill está pensada para responder tareas como:
 - "arma el endpoint para emitir una factura 33"
-- "qué headers necesita IntegraFacturacion"
+- "qué headers necesita IntegraDTE"
 - "dame un payload base para boleta 39"
 - "valida este JSON de nota de crédito 61"
 - "qué endpoint consulta el último folio usado"
@@ -67,7 +67,7 @@ Esta skill está pensada para responder tareas como:
 
 La skill se apoya en dos fuentes principales:
 
-1. Colección Postman de IntegraFacturacion
+1. Colección Postman de IntegraDTE
 2. Archivos del repo con campos SII por tipo de documento
 
 Tipos cubiertos en esta primera versión:

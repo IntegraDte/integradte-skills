@@ -1,81 +1,81 @@
 {
-  "skill_name": "integrafacturacion-skills",
+  "skill_name": "integradte-skills",
   "evals": [
     {
       "id": 1,
-      "prompt": "Necesito emitir una factura electrónica 33 en integrafacturacion.cl. Dame el endpoint, headers y un payload JSON base usando user_id, business_id y data_dte_json.",
+      "prompt": "Necesito emitir una factura electrónica 33 en integradte.cl. Dame el endpoint, headers y un payload JSON base usando user_id, business_id y data_dte_json.",
       "expected_output": "Debe usar POST /documents/, incluir x-api-key e idempotency-key, code_sii 33 y un payload coherente con factura 33.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "Qué endpoint uso para consultar el último folio usado de una guía de despacho 52 en IntegraFacturacion y qué parámetro tengo que mandar?",
+      "prompt": "Qué endpoint uso para consultar el último folio usado de una guía de despacho 52 en IntegraDTE y qué parámetro tengo que mandar?",
       "expected_output": "Debe responder GET /numerations/last-used-number?code_sii=52 e indicar el header x-api-key.",
       "files": []
     },
     {
       "id": 3,
-      "prompt": "Revísame este caso: quiero armar una boleta 39 para integrafacturacion.cl y no sé qué campos mínimos del Encabezado y Detalle necesito. Responde usando los archivos SII del proyecto, sin TED ni firma.",
+      "prompt": "Revísame este caso: quiero armar una boleta 39 para integradte.cl y no sé qué campos mínimos del Encabezado y Detalle necesito. Responde usando los archivos SII del proyecto, sin TED ni firma.",
       "expected_output": "Debe apoyarse en el archivo de boleta 39 y listar campos mínimos del documento, sin incluir TED ni Signature.",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "Dame un ejemplo para emitir una factura exenta 34 en IntegraFacturacion. Quiero método, endpoint, headers y body mínimo con data_dte_json.",
+      "prompt": "Dame un ejemplo para emitir una factura exenta 34 en IntegraDTE. Quiero método, endpoint, headers y body mínimo con data_dte_json.",
       "expected_output": "Debe usar POST /documents/, code_sii 34 y un payload mínimo coherente con factura exenta 34.",
       "files": []
     },
     {
       "id": 5,
-      "prompt": "Necesito crear una boleta exenta 41 en integrafacturacion.cl. Qué campos mínimos van y qué payload base debería mandar?",
+      "prompt": "Necesito crear una boleta exenta 41 en integradte.cl. Qué campos mínimos van y qué payload base debería mandar?",
       "expected_output": "Debe mapear el tipo 41, usar la referencia correcta de boleta exenta y proponer payload mínimo consistente.",
       "files": []
     },
     {
       "id": 6,
-      "prompt": "Ayúdame con una nota de crédito 61 para IntegraFacturacion. Necesito endpoint, headers y ejemplo JSON razonable para anular parcialmente una factura.",
+      "prompt": "Ayúdame con una nota de crédito 61 para IntegraDTE. Necesito endpoint, headers y ejemplo JSON razonable para anular parcialmente una factura.",
       "expected_output": "Debe usar POST /documents/, code_sii 61 y apoyarse en los ejemplos/estructura de nota de crédito 61.",
       "files": []
     },
     {
       "id": 7,
-      "prompt": "Quiero emitir una nota de débito 56 en IntegraFacturacion y necesito saber qué campos revisar en Encabezado, Referencia y Detalle.",
+      "prompt": "Quiero emitir una nota de débito 56 en IntegraDTE y necesito saber qué campos revisar en Encabezado, Referencia y Detalle.",
       "expected_output": "Debe usar la referencia de DTE 56 y listar campos relevantes de Encabezado, Referencia y Detalle.",
       "files": []
     },
     {
       "id": 8,
-      "prompt": "Tengo que modificar un documento ya emitido en IntegraFacturacion. Qué endpoint uso y cómo sería el body si actualizo el data_dte_json?",
+      "prompt": "Tengo que modificar un documento ya emitido en IntegraDTE. Qué endpoint uso y cómo sería el body si actualizo el data_dte_json?",
       "expected_output": "Debe indicar PUT /documents/{id} y explicar que el identificador real reemplaza {id}, con body basado en data_dte_json.",
       "files": []
     },
     {
       "id": 9,
-      "prompt": "Qué endpoint de IntegraFacturacion me da las estadísticas de documentos y qué header necesita?",
+      "prompt": "Qué endpoint de IntegraDTE me da las estadísticas de documentos y qué header necesita?",
       "expected_output": "Debe responder GET /documents/stats y mencionar x-api-key.",
       "files": []
     },
     {
       "id": 10,
-      "prompt": "Necesito cargar un CAF en IntegraFacturacion. Dime el endpoint correcto y explícame qué debería validar antes de subirlo.",
+      "prompt": "Necesito cargar un CAF en IntegraDTE. Dime el endpoint correcto y explícame qué debería validar antes de subirlo.",
       "expected_output": "Debe usar PUT /numerations y explicar validaciones previas razonables para CAF y numeración.",
       "files": []
     },
     {
       "id": 11,
-      "prompt": "Cómo consulto la información del certificado digital en IntegraFacturacion? Quiero el endpoint y los headers mínimos.",
+      "prompt": "Cómo consulto la información del certificado digital en IntegraDTE? Quiero el endpoint y los headers mínimos.",
       "expected_output": "Debe responder GET /business/certificate-info y mencionar x-api-key.",
       "files": []
     },
     {
       "id": 12,
-      "prompt": "Necesito generar un PDF de un documento desde IntegraFacturacion. Qué endpoint usarías y qué me advertirías revisar antes de integrarlo?",
+      "prompt": "Necesito generar un PDF de un documento desde IntegraDTE. Qué endpoint usarías y qué me advertirías revisar antes de integrarlo?",
       "expected_output": "Debe usar POST /pdfs/generate y dar advertencias razonables sobre payload/identificación del documento.",
       "files": []
     },
     {
       "id": 13,
-      "prompt": "Quiero emitir una liquidación factura 43 en integrafacturacion.cl. Ayúdame con el payload.",
+      "prompt": "Quiero emitir una liquidación factura 43 en integradte.cl. Ayúdame con el payload.",
       "expected_output": "Debe indicar claramente que la skill actual no soporta DTE 43 y no debe inventar un payload para ese tipo.",
       "files": []
     }

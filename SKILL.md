@@ -1,15 +1,15 @@
 ---
-name: integrafacturacion-skills
-description: Ayuda a trabajar con la API de integrafacturacion.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar o consultar DTEs, cargar CAF, generar PDFs, gestionar empresas o certificados, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraFacturacion e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integrafacturacion.cl".
+name: integradte-skills
+description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar o consultar DTEs, cargar CAF, generar PDFs, gestionar empresas o certificados, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraDTE e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integradte.cl".
 ---
 
-# IntegraFacturacion
+# IntegraDTE
 
-Usa esta skill para construir requests correctos hacia `https://api.integrafacturacion.cl/api/v1`, apoyándote en el Postman oficial y en los archivos locales del repo que documentan campos SII por tipo de documento.
+Usa esta skill para construir requests correctos hacia `https://api.integradte.cl/api/v1`, apoyándote en el Postman oficial y en los archivos locales del repo que documentan campos SII por tipo de documento.
 
 ## Objetivo
 
-Resolver tareas de integración con IntegraFacturacion sin inventar endpoints ni payloads.
+Resolver tareas de integración con IntegraDTE sin inventar endpoints ni payloads.
 
 Esto incluye:
 
@@ -109,7 +109,7 @@ Si además pide código, agrega:
 ## Ejemplos de uso
 
 **Ejemplo 1:**
-Usuario: "Necesito emitir una factura 33 en IntegraFacturacion con Node."
+Usuario: "Necesito emitir una factura 33 en IntegraDTE con Node."
 Acción esperada:
 
 - usar endpoint `POST /documents/`

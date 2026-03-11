@@ -1,7 +1,7 @@
-# Endpoints de IntegraFacturacion
+# Endpoints de IntegraDTE
 
-Fuente: colección Postman `Integra Facturación API` entregada por el usuario.
-Base URL: `https://api.integrafacturacion.cl/api/v1`
+Fuente: colección Postman `IntegraDTE API` entregada por el usuario.
+Base URL: `https://api.integradte.cl/api/v1`
 
 ## Variables observadas
 
