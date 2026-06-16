@@ -1,11 +1,11 @@
 ---
 name: integradte-skills
-description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar o consultar DTEs, cargar CAF, generar PDFs, gestionar empresas o certificados, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraDTE e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integradte.cl".
+description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar, sincronizar o consultar DTEs, cargar o pedir folios/CAF, generar PDFs, gestionar usuarios por provisioning, empresas, certificados, billing, compras/acuse, licencias offline, dispositivos, modo certificación/producción, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraDTE e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integradte.cl".
 ---
 
 # IntegraDTE
 
-Usa esta skill para construir requests correctos hacia `https://api.integradte.cl/api/v1`, apoyándote en el Postman oficial y en los archivos locales del repo que documentan campos SII por tipo de documento.
+Usa esta skill para construir requests correctos hacia `https://api.integradte.cl/api/v1` y los alias offline bajo `/v1`, apoyándote en el Postman oficial, en la referencia local de endpoints y en los archivos locales del repo que documentan campos SII por tipo de documento.
 
 ## Objetivo
 
@@ -15,10 +15,12 @@ Esto incluye:
 
 - elegir el endpoint correcto
 - incluir headers obligatorios
+- distinguir rutas privadas, rutas de provisioning y alias offline `/v1`
 - mapear `code_sii` al tipo de documento correcto
 - proponer payloads mínimos y payloads razonables
 - validar campos contra la estructura SII disponible en los markdown del proyecto
 - diferenciar cuándo usar `data_dte_json` y cuándo el ejemplo oficial usa `data_dte`
+- diferenciar respuestas con wrapper `success/data` de respuestas JSON planas
 
 ## Flujo
 
@@ -27,14 +29,18 @@ Esto incluye:
 Primero clasifica la tarea del usuario en una de estas categorías:
 
 - empresas
+- provisioning de usuarios/empresas
 - certificados
 - usuario autenticado
 - emisión o modificación de DTE
-- consulta o estadísticas de documentos
+- consulta, estadísticas, requeue o sincronización offline de documentos
 - numeración / CAF / folios
 - PDFs
 - cesiones
 - compras / acuse de recibo
+- billing / balance / pagos
+- licencias offline / dispositivos / activación / refresh
+- ambiente de certificación o producción
 
 Luego abre `references/endpoints.md`.
 
@@ -70,6 +76,14 @@ Para requests autenticados, usa como base:
 - `Content-Type: application/json` cuando corresponda
 - `idempotency-key: <valor-unico>` en operaciones de escritura donde el Postman lo usa
 
+Para provisioning, usa:
+
+- `x-provisioning-key: <provisioning_api_key>`
+- `idempotency-key: <valor-unico>`
+- `Content-Type: application/json`
+
+No reemplaces `x-provisioning-key` con `x-api-key`.
+
 Si el usuario pide código, explica qué headers son obligatorios y cuál es su propósito.
 
 ### 5. Prefiere precisión sobre completitud falsa
@@ -91,6 +105,10 @@ Por ejemplo:
 - Cuando el usuario pida “qué campos van”, responde con una lista de campos mínimos y luego un ejemplo completo.
 - Cuando el usuario pida “validar este payload”, revisa estructura, `TipoDTE`, totales y coherencia básica contra el tipo documentado.
 - Cuando el usuario pida “crear documento X”, usa el archivo de referencia del tipo correcto antes de responder.
+- Para rutas offline `/v1`, conserva el path exacto documentado; no antepongas `/api/v1` a alias como `/v1/numbers/request`, `/v1/licenses/activate` o `/v1/licenses/refresh`.
+- Para `POST /api/v1/documents/sync` y `POST /v1/numbers/request`, advierte que la respuesta es JSON plano, no wrapper `success/data`.
+- Para licencias offline, recuerda que una licencia autoriza un solo dispositivo activo y que el payload firmado usa `business_id`.
+- Para modo producción, recuerda que se requiere certificado digital vigente y resoluciones; los CAF de certificación no sirven en producción.
 
 ## Respuesta recomendada
 
