@@ -43,6 +43,9 @@ En ejemplos locales del backend puede aparecer `http://localhost:3000`.
 - `license_id`
 - `device_id`
 - `device_fingerprint`
+- `certificate`
+- `password`
+- `expired_date`
 
 ## Headers habituales
 
@@ -103,7 +106,10 @@ Payload de `POST /api/v1/provisioning/users/:user_id/businesses`:
   "resolutionDateDte": "1992-12-31",
   "resolutionNumberTicket": "0",
   "resolutionTicketDate": "2014-05-27",
-  "apiTokenName": "Token integracion externa"
+  "apiTokenName": "Token integracion externa",
+  "certificate": "BASE64_DEL_PFX_OPCIONAL",
+  "password": "PASSWORD_CERTIFICADO_OPCIONAL",
+  "expired_date": "2027-05-04T10:30:00Z"
 }
 ```
 
@@ -113,6 +119,9 @@ Notas:
 - La password se guarda hasheada y no se devuelve.
 - La empresa queda `active` y en certificacion (`isProd: false`).
 - `apiTokenName` es opcional.
+- `certificate` es opcional. Si se informa, debe venir como base64 del archivo `.pfx/.p12`.
+- `password` del certificado es opcional. Si se informa, backend lo codifica antes de persistirlo.
+- `expired_date` es requerido solo cuando se informa `certificate`.
 - Si el email ya existe responde `409`; si el usuario no existe responde `404`; si el RUT ya existe responde `409`.
 
 ### Usuario

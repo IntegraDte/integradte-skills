@@ -109,6 +109,7 @@ Por ejemplo:
 - Para `POST /api/v1/documents/sync` y `POST /v1/numbers/request`, advierte que la respuesta es JSON plano, no wrapper `success/data`.
 - Para licencias offline, recuerda que una licencia autoriza un solo dispositivo activo y que el payload firmado usa `business_id`.
 - Para modo producción, recuerda que se requiere certificado digital vigente y resoluciones; los CAF de certificación no sirven en producción.
+- Para `POST /api/v1/provisioning/users/:user_id/businesses`, el certificado puede cargarse opcionalmente en el mismo payload con `certificate` base64, `password` opcional y `expired_date` obligatorio solo si viene `certificate`.
 
 ## Respuesta recomendada
 
