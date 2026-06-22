@@ -40,6 +40,7 @@ En ejemplos locales del backend puede aparecer `http://localhost:3000`.
 - `document_id`
 - `range_id`
 - `code_sii`
+- `numeration_id`
 - `license_id`
 - `device_id`
 - `device_fingerprint`
@@ -326,13 +327,69 @@ Notas:
 
 | Metodo | Ruta | Proposito | Respuesta |
 | --- | --- | --- | --- |
-| `PUT` | `/numerations` | Cargar CAF | wrapper `success/data` |
+| `PUT` | `/api/v1/numerations` | Crear o agregar un rango de folios CAF para un tipo de DTE | wrapper `success/data` |
 | `GET` | `/api/v1/numerations/summary` | Resumen de folios disponibles, agotados y vencidos | wrapper `success/data` |
-| `GET` | `/numerations/last-used-number?code_sii={code_sii}` | Obtener ultimo folio usado | wrapper `success/data` |
-| `DELETE` | `/numerations/{range_id}` | Eliminar rango | wrapper `success/data` |
+| `GET` | `/api/v1/numerations/ranges` | Listar rangos CAF agrupados por tipo de DTE, con usados/disponibles | wrapper `success/data` |
+| `PATCH` | `/api/v1/numerations/:numerationId/next-number` | Ajustar el proximo folio a emitir de un rango CAF | wrapper `success/data` |
+| `DELETE` | `/api/v1/numerations/:numerationId` | Eliminar un rango de folios CAF | wrapper `success/data` |
+| `GET` | `/numerations/last-used-number?code_sii={code_sii}` | Obtener ultimo folio usado (observado en Postman) | wrapper `success/data` |
 | `POST` | `/v1/numbers/request` | Reservar y devolver rangos de folios disponibles | arreglo JSON plano |
 | `POST` | `/v1/folios/request` | Alias temporal de `/v1/numbers/request` | arreglo JSON plano |
 | `POST` | `/api/v1/numerations/request-rabbitmq` | Publicar solicitud de folios en RabbitMQ | wrapper `success/data` |
+
+Payload de `PUT /api/v1/numerations`:
+
+```json
+{
+  "code_sii": "33",
+  "start_number": 100,
+  "end_number": 199,
+  "caf_base64": "BASE64_DEL_XML_DEL_CAF",
+  "creation_date": "2026-06-01T00:00:00Z",
+  "due_date": "2026-12-31T00:00:00Z"
+}
+```
+
+Notas de `PUT /api/v1/numerations`:
+
+- Requiere `x-api-key`. No disponible para sesiones impersonadas (bloqueadas para escritura).
+- Soporta `idempotency-key` (opcional) para no duplicar la creacion ante reintentos.
+- El ambiente (`isProduction`) lo determina el backend segun el modo de la empresa (`isProd`); no se toma del body.
+- `caf_base64` es el XML del CAF entregado por el SII, en base64.
+- `end_number` debe ser mayor o igual a `start_number`; si no, responde `400`.
+
+Query params de `GET /api/v1/numerations/ranges`:
+
+- `code_sii` (opcional): filtra por un tipo de DTE; si se omite, devuelve todos.
+
+Notas de `GET /api/v1/numerations/ranges`:
+
+- Requiere `x-api-key`.
+- Devuelve los rangos agrupados por `code_sii` con `total_folios`, `used_folios`, `available` y el detalle de cada rango (`start_number`, `end_number`, `last_number`, `available`, `is_exhausted`, `due_date`, `is_expired`, `created_at`).
+- El CAF base64 se omite a proposito para no exponer el material de firma.
+- El ambiente (produccion/certificacion) lo determina el backend segun el modo de la empresa.
+
+Payload de `PATCH /api/v1/numerations/:numerationId/next-number`:
+
+```json
+{
+  "next_number": 150
+}
+```
+
+Notas de `PATCH /api/v1/numerations/:numerationId/next-number`:
+
+- `next_number` es el folio que recibira el siguiente documento; internamente el contador se guarda como `next_number - 1`.
+- Requiere `x-api-key`. No disponible para sesiones impersonadas (bloqueadas para escritura). Soporta `idempotency-key` (opcional).
+- `:numerationId` debe ser un ObjectID valido (si no, responde `400`).
+- `next_number` debe caer dentro del rango del CAF; fuera de rango responde `400`.
+- Si el rango no existe responde `404`; ante actualizacion concurrente responde `409` (reintentar).
+
+Notas de `DELETE /api/v1/numerations/:numerationId`:
+
+- Requiere `x-api-key`. No disponible para sesiones impersonadas. Soporta `idempotency-key` (opcional).
+- `:numerationId` debe ser un ObjectID valido (si no, responde `400`).
+- Si el rango no existe responde `404`.
 
 Payload de `POST /v1/numbers/request`:
 
@@ -537,8 +594,11 @@ Si el usuario dice esto, probablemente quiere esto:
 - "sincronizar documento offline" -> `POST /api/v1/documents/sync`
 - "reprocesar offline" -> `POST /api/v1/documents/requeue/offline`
 - "consultar estado offline" -> `POST /api/v1/documents/requeue/status`
-- "cargar CAF" -> `PUT /numerations`
+- "cargar CAF" -> `PUT /api/v1/numerations`
 - "ver folios" -> `GET /api/v1/numerations/summary`
+- "listar rangos CAF" -> `GET /api/v1/numerations/ranges`
+- "ajustar proximo folio" -> `PATCH /api/v1/numerations/:numerationId/next-number`
+- "eliminar rango CAF" -> `DELETE /api/v1/numerations/:numerationId`
 - "ultimo folio" -> `GET /numerations/last-used-number`
 - "pedir folios offline" -> `POST /v1/numbers/request`
 - "pedir folios por RabbitMQ" -> `POST /api/v1/numerations/request-rabbitmq`

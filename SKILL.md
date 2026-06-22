@@ -109,6 +109,7 @@ Por ejemplo:
 - Para `POST /api/v1/documents/sync` y `POST /v1/numbers/request`, advierte que la respuesta es JSON plano, no wrapper `success/data`.
 - Para licencias offline, recuerda que una licencia autoriza un solo dispositivo activo y que el payload firmado usa `business_id`.
 - Para modo producción, recuerda que se requiere certificado digital vigente y resoluciones; los CAF de certificación no sirven en producción.
+- Para numeración/CAF usa las rutas canónicas `PUT /api/v1/numerations` (cargar rango con `caf_base64`), `GET /api/v1/numerations/ranges` (listar rangos), `PATCH /api/v1/numerations/:numerationId/next-number` (resincronizar próximo folio) y `DELETE /api/v1/numerations/:numerationId` (eliminar rango). El ambiente lo determina el backend según `isProd`; no se envía en el body. `end_number` debe ser >= `start_number` y `next_number` debe caer dentro del rango.
 - Para `POST /api/v1/provisioning/users/:user_id/businesses`, el certificado puede cargarse opcionalmente en el mismo payload con `certificate` base64, `password` opcional y `expired_date` obligatorio solo si viene `certificate`.
 
 ## Respuesta recomendada
