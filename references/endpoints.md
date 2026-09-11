@@ -280,8 +280,6 @@ Notas:
 | `POST` | `/api/v1/documents/requeue/offline` | Reencolar documento offline en cola `offline_invoices` | wrapper `success/data` |
 | `POST` | `/api/v1/documents/requeue/status` | Reencolar consulta de estado SII offline en cola `dte_status` | wrapper `success/data` |
 
-`POST /api/v1/documents/sync` ya no existe en la API publica.
-
 Payload de requeue offline/status:
 
 ```json
@@ -304,8 +302,7 @@ Notas:
 | `PATCH` | `/api/v1/numerations/:numerationId/next-number` | Ajustar el proximo folio a emitir de un rango CAF | wrapper `success/data` |
 | `DELETE` | `/api/v1/numerations/:numerationId` | Eliminar un rango de folios CAF | wrapper `success/data` |
 | `GET` | `/numerations/last-used-number?code_sii={code_sii}` | Obtener ultimo folio usado (observado en Postman) | wrapper `success/data` |
-| `POST` | `/v1/numbers/request` | Reservar y devolver rangos de folios disponibles | arreglo JSON plano |
-| `POST` | `/v1/folios/request` | Alias temporal de `/v1/numbers/request` | arreglo JSON plano |
+| `POST` | `/api/v1/numerations/request` | Reservar y devolver rangos de folios disponibles | arreglo JSON plano |
 | `POST` | `/api/v1/numerations/request-rabbitmq` | Publicar solicitud de folios en RabbitMQ | wrapper `success/data` |
 
 Payload de `PUT /api/v1/numerations`:
@@ -362,7 +359,7 @@ Notas de `DELETE /api/v1/numerations/:numerationId`:
 - `:numerationId` debe ser un ObjectID valido (si no, responde `400`).
 - Si el rango no existe responde `404`.
 
-Payload de `POST /v1/numbers/request`:
+Payload de `POST /api/v1/numerations/request`:
 
 ```json
 {
@@ -371,8 +368,9 @@ Payload de `POST /v1/numbers/request`:
 }
 ```
 
-Notas de `POST /v1/numbers/request`:
+Notas de `POST /api/v1/numerations/request`:
 
+- Requiere `x-api-key`.
 - Responde con arreglo JSON plano, sin wrapper `success/data`.
 - Los rangos devueltos quedan inmediatamente reservados por la API.
 - Los folios se marcan como usados para que no se entreguen otra vez ni se consuman en paralelo desde emision online.
@@ -427,7 +425,7 @@ Query params de `GET /api/v1/purchase-acknowledgments`:
 
 | Metodo | Ruta | Proposito |
 | --- | --- | --- |
-| `GET` | `/api/v1/billing/balance` | Obtener saldo DTE por packs activos, restantes y expiracion |
+| `GET` | `/api/v1/billing/balance` | Obtener modo de cobro (`billing_mode`) y, segun el modo, plan con cupo mensual por bucket (`usage.documentos`, `usage.consultas`) o consumo acumulado del mes (`on_demand`) |
 | `GET` | `/api/v1/billing/payments` | Historial de pagos con filtros y paginacion |
 
 Query params de `GET /api/v1/billing/payments`:
@@ -468,15 +466,14 @@ Si el usuario dice esto, probablemente quiere esto:
 - "ajustar proximo folio" -> `PATCH /api/v1/numerations/:numerationId/next-number`
 - "eliminar rango CAF" -> `DELETE /api/v1/numerations/:numerationId`
 - "ultimo folio" -> `GET /numerations/last-used-number`
-- "pedir folios offline" -> `POST /v1/numbers/request`
+- "pedir folios offline" -> `POST /api/v1/numerations/request`
 - "pedir folios por RabbitMQ" -> `POST /api/v1/numerations/request-rabbitmq`
 - "generar PDF" -> `POST /pdfs/generate`
 - "crear cesion" -> `POST /cessions/`
 - "acuse de recibo" -> `POST /purchase-acknowledgments`
 - "listar compras recibidas" -> `GET /api/v1/purchase-acknowledgments`
-- "saldo / balance / packs" -> `GET /api/v1/billing/balance`
+- "saldo / balance / cupo del plan" -> `GET /api/v1/billing/balance`
 - "pagos" -> `GET /api/v1/billing/payments`
-- "licencias offline" o "sincronizar documento offline" -> ya no existen en la API publica (`/api/v1/licenses` y `POST /api/v1/documents/sync` se retiraron)
 
 ## Errores comunes
 

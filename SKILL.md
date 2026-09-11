@@ -5,7 +5,7 @@ description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando
 
 # IntegraDTE
 
-Usa esta skill para construir requests correctos hacia `https://api.integradte.cl/api/v1` y los alias offline bajo `/v1`, apoyándote en el Postman oficial, en la referencia local de endpoints y en los archivos locales del repo que documentan campos SII por tipo de documento.
+Usa esta skill para construir requests correctos hacia `https://api.integradte.cl/api/v1`, apoyándote en el Postman oficial, en la referencia local de endpoints y en los archivos locales del repo que documentan campos SII por tipo de documento.
 
 ## Objetivo
 
@@ -15,7 +15,7 @@ Esto incluye:
 
 - elegir el endpoint correcto
 - incluir headers obligatorios
-- distinguir rutas privadas, rutas de provisioning y alias offline `/v1`
+- distinguir rutas privadas y rutas de provisioning
 - mapear `code_sii` al tipo de documento correcto
 - proponer payloads mínimos y payloads razonables
 - validar campos contra la estructura SII disponible en los markdown del proyecto
@@ -104,10 +104,8 @@ Por ejemplo:
 - Cuando el usuario pida “qué campos van”, responde con una lista de campos mínimos y luego un ejemplo completo.
 - Cuando el usuario pida “validar este payload”, revisa estructura, `TipoDTE`, totales y coherencia básica contra el tipo documentado.
 - Cuando el usuario pida “crear documento X”, usa el archivo de referencia del tipo correcto antes de responder.
-- Para rutas offline `/v1`, conserva el path exacto documentado; no antepongas `/api/v1` a alias como `/v1/numbers/request` o `/v1/folios/request`.
-- Para `POST /v1/numbers/request`, advierte que la respuesta es JSON plano, no wrapper `success/data`.
+- Para pedir folios usa `POST /api/v1/numerations/request` y advierte que la respuesta es un arreglo JSON plano, no wrapper `success/data`; si no hay stock responde `[]`.
 - Para `GET /business/certificate-info`, la respuesta es solo `has_valid_certificate` (`true`/`false`), con la misma validación que aplica la emisión. La API no entrega el certificado, su contraseña ni la llave privada: `GET /api/v1/certificates/current` ya no existe y la empresa no incluye `certificate` ni `certificatePassword`.
-- Las licencias offline (`/api/v1/licenses`, `/v1/licenses/*`) y `POST /api/v1/documents/sync` se retiraron de la API pública. Si el usuario las pide, dilo en vez de armar el request.
 - Para modo producción, recuerda que se requiere certificado digital vigente y resoluciones; los CAF de certificación no sirven en producción.
 - Para numeración/CAF usa las rutas canónicas `PUT /api/v1/numerations` (cargar rango con `caf_base64`), `GET /api/v1/numerations/ranges` (listar rangos), `PATCH /api/v1/numerations/:numerationId/next-number` (resincronizar próximo folio) y `DELETE /api/v1/numerations/:numerationId` (eliminar rango). El ambiente lo determina el backend según `isProd`; no se envía en el body. `end_number` debe ser >= `start_number` y `next_number` debe caer dentro del rango.
 - Para `POST /api/v1/provisioning/users/:user_id/businesses`, el certificado puede cargarse opcionalmente en el mismo payload con `certificate` base64, `password` opcional y `expired_date` obligatorio solo si viene `certificate`.
