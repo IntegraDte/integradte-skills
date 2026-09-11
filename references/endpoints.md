@@ -3,7 +3,8 @@
 Fuentes:
 
 - Coleccion Postman `IntegraDTE API` entregada por el usuario.
-- `/Users/joseluis/Desktop/projects/jose/full-dte/full-dte-api-sii/endpoints.md` con rutas API v1 nuevas.
+- `/Users/joseluis/Desktop/projects/jose/full-dte/integradte-api-client/endpoints.md`: API publica de clientes (`x-api-key`).
+- `/Users/joseluis/Desktop/projects/jose/full-dte/full-dte-api-sii/endpoints.md`: API interna, fuente de las rutas de provisioning.
 
 Base URL publica sugerida: `https://api.integradte.cl`
 Base API v1: `https://api.integradte.cl/api/v1`
@@ -19,13 +20,12 @@ En ejemplos locales del backend puede aparecer `http://localhost:3000`.
 - [Empresas](#empresas)
 - [Certificados](#certificados)
 - [Documentos DTE online](#documentos-dte-online)
-- [Documentos offline / sync](#documentos-offline--sync)
+- [Documentos offline](#documentos-offline)
 - [Numeracion / CAF / folios](#numeracion--caf--folios)
 - [PDFs](#pdfs)
 - [Cesiones](#cesiones)
 - [Compras / acuse de recibo](#compras--acuse-de-recibo)
 - [Billing](#billing)
-- [Licencias offline](#licencias-offline)
 - [Endpoint routing rapido](#endpoint-routing-rapido)
 - [Errores comunes](#errores-comunes)
 
@@ -41,9 +41,6 @@ En ejemplos locales del backend puede aparecer `http://localhost:3000`.
 - `range_id`
 - `code_sii`
 - `numeration_id`
-- `license_id`
-- `device_id`
-- `device_fingerprint`
 - `certificate`
 - `password`
 - `expired_date`
@@ -142,7 +139,7 @@ Notas:
 | `POST` | `/api/v1/businesses/production-mode` | Pasar empresa del token a produccion | `x-api-key` |
 | `POST` | `/api/v1/businesses/certification-mode` | Volver empresa del token a certificacion | `x-api-key` |
 | `PUT` | `/business/{business_id}/certificate` | Subir certificado digital | `x-api-key`, `idempotency-key` |
-| `GET` | `/business/certificate-info` | Obtener informacion del certificado | `x-api-key` |
+| `GET` | `/business/certificate-info` | Saber si la empresa tiene certificado valido para firmar | `x-api-key` |
 
 Payload de crear/editar empresa:
 
@@ -172,6 +169,7 @@ Notas:
 - `POST /api/v1/businesses/production-mode` requiere certificado digital vigente y las cuatro resoluciones con fechas `YYYY-MM-DD`.
 - Los CAF de certificacion no sirven en produccion; despues del cambio deben cargarse CAF de produccion.
 - `POST /api/v1/businesses/certification-mode` no valida certificado y es idempotente.
+- La empresa que devuelven `GET/POST /api/v1/businesses` y `GET/PUT /api/v1/businesses/:id` no incluye `certificate` ni `certificatePassword`; si trae los metadatos (`certificateFileName`, `certificateSubject`, `certificateExpiredDate`, `certificateUploadedAt`).
 
 Payload para modo produccion:
 
@@ -188,11 +186,26 @@ Payload para modo produccion:
 
 | Metodo | Ruta | Proposito |
 | --- | --- | --- |
-| `GET` | `/api/v1/certificates/current` | Descargar certificado digital asociado al `x-api-key` actual |
 | `PUT` | `/business/{business_id}/certificate` | Subir certificado digital |
-| `GET` | `/business/certificate-info` | Obtener informacion del certificado |
+| `GET` | `/business/certificate-info` | Saber si la empresa tiene certificado valido para firmar |
 
-`GET /api/v1/certificates/current` devuelve `certificate_base64`, `private_key_base64`, `source` y `downloaded_at`. Se usa para firmar XML en workers o servicios firmadores; guardar el material en cache segura.
+Respuesta de `GET /business/certificate-info`:
+
+```json
+{
+  "success": true,
+  "message": "certificate info retrieved successfully",
+  "data": {
+    "has_valid_certificate": true
+  }
+}
+```
+
+Notas:
+
+- `has_valid_certificate` es `true` solo si la empresa tiene certificado cargado, abre con su contrasena y no esta vencido. Es la misma validacion que aplica la emision: `false` significa que emitir se va a rechazar por el certificado.
+- Si la empresa no tiene certificado responde `200` con `false`, no un error.
+- La API no entrega el certificado, su contrasena ni la llave privada por ninguna ruta. `GET /api/v1/certificates/current` ya no existe.
 
 ### Documentos DTE online
 
@@ -260,54 +273,14 @@ Notas:
 - `POST /api/v1/documents/requeue` valida ownership y bloquea el requeue si el documento ya fue recibido o procesado por SII.
 - `GET /api/v1/documents/:id` valida ownership por token.
 
-### Documentos offline / sync
+### Documentos offline
 
 | Metodo | Ruta | Proposito | Respuesta |
 | --- | --- | --- | --- |
-| `POST` | `/api/v1/documents/sync` | Sincronizar DTE ya firmado hacia backend y persistir en `documents_offline` | JSON plano |
 | `POST` | `/api/v1/documents/requeue/offline` | Reencolar documento offline en cola `offline_invoices` | wrapper `success/data` |
 | `POST` | `/api/v1/documents/requeue/status` | Reencolar consulta de estado SII offline en cola `dte_status` | wrapper `success/data` |
 
-Payload minimo de `POST /api/v1/documents/sync`:
-
-```json
-{
-  "document_id": "DTE_33_xxx",
-  "document_type": 33,
-  "folio": 1001,
-  "xml_base64": "BASE64_OF_SIGNED_XML",
-  "pdf_base64": "BASE64_OF_RENDERED_PDF",
-  "ted_xml_base64": "BASE64_OF_TED_XML",
-  "generated_at": "2026-03-14T12:00:00Z",
-  "raw_payload": {
-    "Encabezado": {
-      "IdDoc": {
-        "TipoDTE": 33
-      }
-    }
-  },
-  "license": {
-    "payload": {
-      "license_id": "lic_123",
-      "business_id": "biz_123",
-      "device_id": "dev_123",
-      "device_fingerprint": "machine-1",
-      "business": {
-        "business_name": "Empresa Demo SPA",
-        "rut": "76000000-0",
-        "is_prod": true
-      },
-      "features": ["dte", "sync", "signing"],
-      "issued_at": "2026-03-01T00:00:00Z",
-      "expires_at": "2026-04-01T00:00:00Z",
-      "last_validated_at": "2026-03-14T11:55:00Z",
-      "status": "active",
-      "cli_min_version": "dev"
-    },
-    "signature": "BASE64_SIGNATURE"
-  }
-}
-```
+`POST /api/v1/documents/sync` ya no existe en la API publica.
 
 Payload de requeue offline/status:
 
@@ -319,8 +292,6 @@ Payload de requeue offline/status:
 
 Notas:
 
-- `POST /api/v1/documents/sync` no genera XML ni consume folios.
-- `POST /api/v1/documents/sync` guarda `raw_payload`, XML firmado, PDF si viene, TED y licencia enviada por cliente.
 - Los requeues offline esperan el `_id` del documento en `documents_offline` y responden `404` si no pertenece a la empresa autenticada.
 
 ### Numeracion / CAF / folios
@@ -467,109 +438,6 @@ Query params de `GET /api/v1/billing/payments`:
 - `page`, default `1`
 - `limit`, default `20`, max `100`
 
-### Licencias offline
-
-Modelo:
-
-- Una empresa puede tener muchas licencias.
-- Cada licencia autoriza un solo dispositivo activo.
-- No existen `plans`, `subscriptions` ni `customers`.
-- El payload firmado usa `business_id`.
-- La firma es Ed25519.
-
-Colecciones Mongo observadas:
-
-- `offline_licenses`
-- `offline_license_devices`
-- `offline_license_activation_logs`
-- `offline_license_refresh_logs`
-- `offline_license_audit_logs`
-
-| Metodo | Ruta | Proposito | Alias |
-| --- | --- | --- | --- |
-| `POST` | `/api/v1/licenses` | Crear licencia offline para la empresa autenticada | |
-| `GET` | `/api/v1/licenses` | Listar licencias offline de la empresa autenticada | |
-| `GET` | `/api/v1/licenses/:id` | Obtener licencia especifica | |
-| `GET` | `/api/v1/licenses/:id/devices` | Listar dispositivos de una licencia | |
-| `POST` | `/api/v1/licenses/:id/enable` | Reactivar licencia deshabilitada | |
-| `POST` | `/api/v1/licenses/:id/disable` | Deshabilitar licencia sin revocarla | |
-| `POST` | `/api/v1/licenses/:id/revoke` | Revocar licencia definitivamente | |
-| `POST` | `/api/v1/licenses/activate` | Activar licencia offline y devolver licencia firmada | `/v1/licenses/activate` |
-| `POST` | `/api/v1/licenses/refresh` | Refrescar, denegar o revocar licencia offline | `/v1/licenses/refresh` |
-| `POST` | `/v1/licenses/activate` | Alias compatible con cliente offline para activar licencia | `/api/v1/licenses/activate` |
-| `POST` | `/v1/licenses/refresh` | Alias compatible con cliente offline para refrescar licencia | `/api/v1/licenses/refresh` |
-
-Payload de crear licencia:
-
-```json
-{
-  "name": "Caja 01",
-  "device_fingerprint": "motherboard-abc",
-  "features": ["dte", "sync", "signing"],
-  "cli_min_version": "1.0.0",
-  "validity_hours": 360
-}
-```
-
-Notas:
-
-- Si no se envia `license_key`, la API lo genera.
-- Si no se envia `features`, usa `["dte", "sync", "signing"]`.
-- Si se omite `device_id`, la API usa internamente el mismo valor de `device_fingerprint`.
-
-Payload de activar licencia:
-
-```json
-{
-  "license_key": "ABCDE-12345-FGHIJ",
-  "device_id": "machine-id",
-  "machine_fingerprint": "machine-id",
-  "hostname": "pc-contabilidad-01",
-  "platform": "windows",
-  "arch": "amd64",
-  "cli_version": "1.0.0"
-}
-```
-
-Payload de refrescar licencia:
-
-```json
-{
-  "device_id": "machine-id",
-  "machine_fingerprint": "machine-id",
-  "cli_version": "1.0.0",
-  "license": {
-    "payload": {
-      "license_id": "lic_01ABC",
-      "business_id": "biz_123",
-      "device_id": "machine-id",
-      "device_fingerprint": "machine-id",
-      "features": ["dte", "sync", "signing"],
-      "issued_at": "2026-03-14T12:00:00Z",
-      "expires_at": "2026-03-29T12:00:00Z",
-      "last_validated_at": "2026-03-14T12:00:00Z",
-      "status": "active",
-      "cli_min_version": "1.0.0"
-    },
-    "signature": "BASE64_ED25519_SIGNATURE"
-  }
-}
-```
-
-Respuestas posibles de refresh:
-
-- `{"action": "renewed", "reason": "ok", "license": {...}}`
-- `{"action": "deny", "reason": "device_limit_exceeded"}`
-- `{"action": "revoke", "reason": "license_revoked"}`
-
-Payload de enable/disable/revoke:
-
-```json
-{
-  "reason": "manual_enable"
-}
-```
-
 ## Endpoint routing rapido
 
 Si el usuario dice esto, probablemente quiere esto:
@@ -584,14 +452,14 @@ Si el usuario dice esto, probablemente quiere esto:
 - "pasar a produccion" -> `POST /api/v1/businesses/production-mode`
 - "volver a certificacion" -> `POST /api/v1/businesses/certification-mode`
 - "subir certificado" -> `PUT /business/{business_id}/certificate`
-- "descargar certificado actual" -> `GET /api/v1/certificates/current`
+- "estado del certificado / puedo emitir" -> `GET /business/certificate-info`
+- "descargar certificado" -> no existe; la API no entrega el certificado ni su llave
 - "emitir factura / boleta / nota / guia" -> `POST /documents/`
 - "modificar documento" -> `PUT /documents/{id}`
 - "listar documentos" -> `GET /api/v1/documents`
 - "traer documento" -> `GET /api/v1/documents/:id`
 - "estadisticas" -> `GET /api/v1/documents/stats`
 - "reprocesar documento" -> `POST /api/v1/documents/requeue`
-- "sincronizar documento offline" -> `POST /api/v1/documents/sync`
 - "reprocesar offline" -> `POST /api/v1/documents/requeue/offline`
 - "consultar estado offline" -> `POST /api/v1/documents/requeue/status`
 - "cargar CAF" -> `PUT /api/v1/numerations`
@@ -608,13 +476,7 @@ Si el usuario dice esto, probablemente quiere esto:
 - "listar compras recibidas" -> `GET /api/v1/purchase-acknowledgments`
 - "saldo / balance / packs" -> `GET /api/v1/billing/balance`
 - "pagos" -> `GET /api/v1/billing/payments`
-- "crear licencia offline" -> `POST /api/v1/licenses`
-- "listar licencias" -> `GET /api/v1/licenses`
-- "activar licencia" -> `POST /api/v1/licenses/activate` o alias `/v1/licenses/activate`
-- "refrescar licencia" -> `POST /api/v1/licenses/refresh` o alias `/v1/licenses/refresh`
-- "habilitar licencia" -> `POST /api/v1/licenses/:id/enable`
-- "deshabilitar licencia" -> `POST /api/v1/licenses/:id/disable`
-- "revocar licencia" -> `POST /api/v1/licenses/:id/revoke`
+- "licencias offline" o "sincronizar documento offline" -> ya no existen en la API publica (`/api/v1/licenses` y `POST /api/v1/documents/sync` se retiraron)
 
 ## Errores comunes
 

@@ -1,6 +1,6 @@
 ---
 name: integradte-skills
-description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar, sincronizar o consultar DTEs, cargar o pedir folios/CAF, generar PDFs, gestionar usuarios por provisioning, empresas, certificados, billing, compras/acuse, licencias offline, dispositivos, modo certificación/producción, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraDTE e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integradte.cl".
+description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar o consultar DTEs, cargar o pedir folios/CAF, generar PDFs, gestionar usuarios por provisioning, empresas, certificados, billing, compras/acuse, modo certificación/producción, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraDTE e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integradte.cl".
 ---
 
 # IntegraDTE
@@ -33,13 +33,12 @@ Primero clasifica la tarea del usuario en una de estas categorías:
 - certificados
 - usuario autenticado
 - emisión o modificación de DTE
-- consulta, estadísticas, requeue o sincronización offline de documentos
+- consulta, estadísticas o requeue (online y offline) de documentos
 - numeración / CAF / folios
 - PDFs
 - cesiones
 - compras / acuse de recibo
 - billing / balance / pagos
-- licencias offline / dispositivos / activación / refresh
 - ambiente de certificación o producción
 
 Luego abre `references/endpoints.md`.
@@ -105,9 +104,10 @@ Por ejemplo:
 - Cuando el usuario pida “qué campos van”, responde con una lista de campos mínimos y luego un ejemplo completo.
 - Cuando el usuario pida “validar este payload”, revisa estructura, `TipoDTE`, totales y coherencia básica contra el tipo documentado.
 - Cuando el usuario pida “crear documento X”, usa el archivo de referencia del tipo correcto antes de responder.
-- Para rutas offline `/v1`, conserva el path exacto documentado; no antepongas `/api/v1` a alias como `/v1/numbers/request`, `/v1/licenses/activate` o `/v1/licenses/refresh`.
-- Para `POST /api/v1/documents/sync` y `POST /v1/numbers/request`, advierte que la respuesta es JSON plano, no wrapper `success/data`.
-- Para licencias offline, recuerda que una licencia autoriza un solo dispositivo activo y que el payload firmado usa `business_id`.
+- Para rutas offline `/v1`, conserva el path exacto documentado; no antepongas `/api/v1` a alias como `/v1/numbers/request` o `/v1/folios/request`.
+- Para `POST /v1/numbers/request`, advierte que la respuesta es JSON plano, no wrapper `success/data`.
+- Para `GET /business/certificate-info`, la respuesta es solo `has_valid_certificate` (`true`/`false`), con la misma validación que aplica la emisión. La API no entrega el certificado, su contraseña ni la llave privada: `GET /api/v1/certificates/current` ya no existe y la empresa no incluye `certificate` ni `certificatePassword`.
+- Las licencias offline (`/api/v1/licenses`, `/v1/licenses/*`) y `POST /api/v1/documents/sync` se retiraron de la API pública. Si el usuario las pide, dilo en vez de armar el request.
 - Para modo producción, recuerda que se requiere certificado digital vigente y resoluciones; los CAF de certificación no sirven en producción.
 - Para numeración/CAF usa las rutas canónicas `PUT /api/v1/numerations` (cargar rango con `caf_base64`), `GET /api/v1/numerations/ranges` (listar rangos), `PATCH /api/v1/numerations/:numerationId/next-number` (resincronizar próximo folio) y `DELETE /api/v1/numerations/:numerationId` (eliminar rango). El ambiente lo determina el backend según `isProd`; no se envía en el body. `end_number` debe ser >= `start_number` y `next_number` debe caer dentro del rango.
 - Para `POST /api/v1/provisioning/users/:user_id/businesses`, el certificado puede cargarse opcionalmente en el mismo payload con `certificate` base64, `password` opcional y `expired_date` obligatorio solo si viene `certificate`.
