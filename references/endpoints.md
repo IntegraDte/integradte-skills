@@ -280,8 +280,6 @@ Notas:
 | `POST` | `/api/v1/documents/requeue/offline` | Reencolar documento offline en cola `offline_invoices` | wrapper `success/data` |
 | `POST` | `/api/v1/documents/requeue/status` | Reencolar consulta de estado SII offline en cola `dte_status` | wrapper `success/data` |
 
-`POST /api/v1/documents/sync` ya no existe en la API publica.
-
 Payload de requeue offline/status:
 
 ```json
@@ -427,7 +425,7 @@ Query params de `GET /api/v1/purchase-acknowledgments`:
 
 | Metodo | Ruta | Proposito |
 | --- | --- | --- |
-| `GET` | `/api/v1/billing/balance` | Obtener saldo DTE por packs activos, restantes y expiracion |
+| `GET` | `/api/v1/billing/balance` | Obtener modo de cobro (`billing_mode`) y, segun el modo, plan con cupo mensual por bucket (`usage.documentos`, `usage.consultas`) o consumo acumulado del mes (`on_demand`) |
 | `GET` | `/api/v1/billing/payments` | Historial de pagos con filtros y paginacion |
 
 Query params de `GET /api/v1/billing/payments`:
@@ -474,9 +472,8 @@ Si el usuario dice esto, probablemente quiere esto:
 - "crear cesion" -> `POST /cessions/`
 - "acuse de recibo" -> `POST /purchase-acknowledgments`
 - "listar compras recibidas" -> `GET /api/v1/purchase-acknowledgments`
-- "saldo / balance / packs" -> `GET /api/v1/billing/balance`
+- "saldo / balance / cupo del plan" -> `GET /api/v1/billing/balance`
 - "pagos" -> `GET /api/v1/billing/payments`
-- "licencias offline" o "sincronizar documento offline" -> ya no existen en la API publica (`/api/v1/licenses` y `POST /api/v1/documents/sync` se retiraron)
 
 ## Errores comunes
 

@@ -64,7 +64,7 @@
     {
       "id": 11,
       "prompt": "Cómo consulto la información del certificado digital en IntegraDTE? Quiero el endpoint y los headers mínimos.",
-      "expected_output": "Debe responder GET /business/certificate-info y mencionar x-api-key.",
+      "expected_output": "Debe responder GET /business/certificate-info y mencionar x-api-key. Debe aclarar que la respuesta es solo has_valid_certificate (true/false) y que la API no entrega el certificado, su contraseña ni la llave privada.",
       "files": []
     },
     {
