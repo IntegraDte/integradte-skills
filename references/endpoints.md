@@ -277,10 +277,9 @@ Notas:
 
 | Metodo | Ruta | Proposito | Respuesta |
 | --- | --- | --- | --- |
-| `POST` | `/api/v1/documents/requeue/offline` | Reencolar documento offline en cola `offline_invoices` | wrapper `success/data` |
 | `POST` | `/api/v1/documents/requeue/status` | Reencolar consulta de estado SII offline en cola `dte_status` | wrapper `success/data` |
 
-Payload de requeue offline/status:
+Payload de `POST /api/v1/documents/requeue/status`:
 
 ```json
 {
@@ -290,7 +289,7 @@ Payload de requeue offline/status:
 
 Notas:
 
-- Los requeues offline esperan el `_id` del documento en `documents_offline` y responden `404` si no pertenece a la empresa autenticada.
+- `POST /api/v1/documents/requeue/status` espera el `_id` del documento en `documents_offline` y responde `404` si no pertenece a la empresa autenticada.
 
 ### Numeracion / CAF / folios
 
@@ -303,7 +302,6 @@ Notas:
 | `DELETE` | `/api/v1/numerations/:numerationId` | Eliminar un rango de folios CAF | wrapper `success/data` |
 | `GET` | `/numerations/last-used-number?code_sii={code_sii}` | Obtener ultimo folio usado (observado en Postman) | wrapper `success/data` |
 | `POST` | `/api/v1/numerations/request` | Reservar y devolver rangos de folios disponibles | arreglo JSON plano |
-| `POST` | `/api/v1/numerations/request-rabbitmq` | Publicar solicitud de folios en RabbitMQ | wrapper `success/data` |
 
 Payload de `PUT /api/v1/numerations`:
 
@@ -376,21 +374,6 @@ Notas de `POST /api/v1/numerations/request`:
 - Los folios se marcan como usados para que no se entreguen otra vez ni se consuman en paralelo desde emision online.
 - Si no hay stock responde `[]`.
 
-Payload de `POST /api/v1/numerations/request-rabbitmq`:
-
-```json
-{
-  "code_sii": "33",
-  "quantity": 120
-}
-```
-
-Notas de `POST /api/v1/numerations/request-rabbitmq`:
-
-- Toma la empresa autenticada desde el token y publica `businessId`.
-- Publica en la cola `request_numerations`.
-- No reserva folios localmente ni devuelve rangos disponibles.
-
 ### PDFs
 
 | Metodo | Ruta | Proposito |
@@ -458,7 +441,6 @@ Si el usuario dice esto, probablemente quiere esto:
 - "traer documento" -> `GET /api/v1/documents/:id`
 - "estadisticas" -> `GET /api/v1/documents/stats`
 - "reprocesar documento" -> `POST /api/v1/documents/requeue`
-- "reprocesar offline" -> `POST /api/v1/documents/requeue/offline`
 - "consultar estado offline" -> `POST /api/v1/documents/requeue/status`
 - "cargar CAF" -> `PUT /api/v1/numerations`
 - "ver folios" -> `GET /api/v1/numerations/summary`
@@ -467,7 +449,6 @@ Si el usuario dice esto, probablemente quiere esto:
 - "eliminar rango CAF" -> `DELETE /api/v1/numerations/:numerationId`
 - "ultimo folio" -> `GET /numerations/last-used-number`
 - "pedir folios offline" -> `POST /api/v1/numerations/request`
-- "pedir folios por RabbitMQ" -> `POST /api/v1/numerations/request-rabbitmq`
 - "generar PDF" -> `POST /pdfs/generate`
 - "crear cesion" -> `POST /cessions/`
 - "acuse de recibo" -> `POST /purchase-acknowledgments`
