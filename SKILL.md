@@ -1,6 +1,6 @@
 ---
 name: integradte-skills
-description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar o consultar DTEs, cargar o pedir folios/CAF, generar PDFs, gestionar usuarios por provisioning, empresas, certificados, billing, compras/acuse, modo certificación/producción, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraDTE e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integradte.cl".
+description: Ayuda a trabajar con la API de integradte.cl. Usa esta skill cuando el usuario quiera emitir, modificar, reprocesar o consultar DTEs, cargar o pedir folios/CAF, configurar umbrales de folios bajos y recarga automática, generar PDFs, login y onboarding de la primera empresa, gestionar usuarios por provisioning, empresas, certificados, cesiones, compras/acuse, billing, consumo del plan, modo certificación/producción, o cuando pida armar payloads, endpoints, headers o ejemplos para IntegraDTE e integración con SII. Actívala también si el usuario menciona tipos DTE chilenos como 33, 34, 39, 41, 46, 52, 56 o 61, aunque no diga explícitamente "skill" ni "integradte.cl".
 ---
 
 # IntegraDTE
@@ -28,17 +28,19 @@ Esto incluye:
 
 Primero clasifica la tarea del usuario en una de estas categorías:
 
+- salud de la API, login y onboarding de la primera empresa (`x-user-key`)
 - empresas
 - provisioning de usuarios/empresas
 - certificados
 - usuario autenticado
 - emisión o modificación de DTE
 - consulta, estadísticas o requeue (online y offline) de documentos
-- numeración / CAF / folios
+- numeración / CAF / folios / umbral de folios bajos y recarga automática
 - PDFs
-- cesiones
+- cesiones (crear, reprocesar, listar, ver detalle)
 - compras / acuse de recibo
-- billing / balance / pagos
+- billing / balance / pagos / cargos / planes / facturas / cotizar upgrade
+- consumo y sobreconsumo del ciclo
 - ambiente de certificación o producción
 
 Luego abre `references/endpoints.md`.
@@ -73,7 +75,9 @@ Para requests autenticados, usa como base:
 
 - `x-api-key: <api_key>`
 - `Content-Type: application/json` cuando corresponda
-- `idempotency-key: <valor-unico>` en operaciones de escritura donde el Postman lo usa
+- `idempotency-key: <UUID>` **obligatorio** en `POST /api/v1/documents`, `PUT /api/v1/documents/:id`, `POST /api/v1/businesses`, `PUT /api/v1/businesses/:id`, `PUT /api/v1/business/:id/certificate`, `PUT /api/v1/numerations`, `DELETE /api/v1/numerations/:numerationId`, `PATCH /api/v1/numerations/:numerationId/next-number`, `PATCH /api/v1/numerations/low-stock`, `POST /api/v1/purchase-acknowledgments` y `POST /api/v1/cessions`. Sin el header la API responde `400 "idempotency-key header is required"`; un valor que no es UUID también da `400`. No lo presentes como opcional en esas rutas. Usa un UUID nuevo por operación lógica (y siempre uno nuevo en cada intento de `PUT /api/v1/documents/:id`).
+
+Para el onboarding de la primera empresa (`POST /api/v1/onboarding/businesses`), usa `x-user-key` (obtenido con `POST /api/v1/auth/login`), no `x-api-key`.
 
 Para provisioning, usa:
 
@@ -105,9 +109,15 @@ Por ejemplo:
 - Cuando el usuario pida “validar este payload”, revisa estructura, `TipoDTE`, totales y coherencia básica contra el tipo documentado.
 - Cuando el usuario pida “crear documento X”, usa el archivo de referencia del tipo correcto antes de responder.
 - Para pedir folios usa `POST /api/v1/numerations/request` y advierte que la respuesta es un arreglo JSON plano, no wrapper `success/data`; si no hay stock responde `[]`.
-- Para `GET /business/certificate-info`, la respuesta es solo `has_valid_certificate` (`true`/`false`), con la misma validación que aplica la emisión. La API no entrega el certificado, su contraseña ni la llave privada: `GET /api/v1/certificates/current` ya no existe y la empresa no incluye `certificate` ni `certificatePassword`.
+- Usa siempre la ruta completa con prefijo `/api/v1` (por ejemplo `POST /api/v1/documents`, `POST /api/v1/pdfs/generate`); la única ruta fuera de ese prefijo es el alias `GET /health`.
+- Si un endpoint responde sin datos, la llave `data` no viene (no es `data: null`); pasa en `PUT /api/v1/numerations`, `DELETE /api/v1/numerations/:numerationId` y `PATCH /api/v1/numerations/:numerationId/next-number`. `GET /api/v1/health` responde JSON plano sin wrapper.
+- Para `GET /api/v1/business/certificate-info`, la respuesta es solo `has_valid_certificate` (`true`/`false`), con la misma validación que aplica la emisión. La API no entrega el certificado, su contraseña ni la llave privada: `GET /api/v1/certificates/current` ya no existe y la empresa no incluye `certificate` ni `certificatePassword`.
 - Para modo producción, recuerda que se requiere certificado digital vigente y resoluciones; los CAF de certificación no sirven en producción.
 - Para numeración/CAF usa las rutas canónicas `PUT /api/v1/numerations` (cargar rango con `caf_base64`), `GET /api/v1/numerations/ranges` (listar rangos), `PATCH /api/v1/numerations/:numerationId/next-number` (resincronizar próximo folio) y `DELETE /api/v1/numerations/:numerationId` (eliminar rango). El ambiente lo determina el backend según `isProd`; no se envía en el body. `end_number` debe ser >= `start_number` y `next_number` debe caer dentro del rango.
+- Para configurar el umbral de folios bajos o la recarga automática de folios usa `PATCH /api/v1/numerations/low-stock` con `x-api-key` e `idempotency-key`. Body: `items[]` con `code_sii` como **string** (`"33"`, `"34"`, `"39"`, `"41"`, `"46"`, `"52"`, `"56"`, `"61"`, sin repetir), `threshold` (entero >= 0) y `request_quantity` (entero >= 1), ambos obligatorios en cada item. Fusiona por código (los que no vienen se conservan) y la respuesta trae la configuración completa, con `null` en la mitad que falte de un código configurado a medias (ese código no se recarga).
+- Para una empresa nueva sin `x-api-key`: `POST /api/v1/auth/login` (email + password, devuelve `data.xUserKey`) y luego `POST /api/v1/onboarding/businesses` con `x-user-key`, que devuelve `data.apiToken.xApiKey`. Si el usuario ya tiene empresa responde `409` y las siguientes se crean con `POST /api/v1/businesses`.
+- Para consumo usa `GET /api/v1/consumption` (ciclo actual por bucket), `GET /api/v1/consumption/overages` (excedentes paginados) y `GET /api/v1/consumption/operations?period=YYYY-MM` (detalle sin paginar). Para billing: `GET /api/v1/billing/charges` (cargos por operación), `GET /api/v1/billing/plans`, `GET /api/v1/billing/invoices` y `GET /api/v1/billing/subscription/upgrade/preview?plan_id=...` (cotiza, no cobra).
+- Para cesiones: `POST /api/v1/cessions` crea, `POST /api/v1/cessions/requeue` reprocesa, `GET /api/v1/cessions` lista (con `document_id` responde si ese documento ya fue cedido; la lista viene en `data.cessions`) y `GET /api/v1/cessions/:id` trae el detalle.
 - Para `POST /api/v1/provisioning/users/:user_id/businesses`, el certificado puede cargarse opcionalmente en el mismo payload con `certificate` base64, `password` opcional y `expired_date` obligatorio solo si viene `certificate`.
 
 ## Respuesta recomendada
@@ -130,8 +140,8 @@ Si además pide código, agrega:
 Usuario: "Necesito emitir una factura 33 en IntegraDTE con Node."
 Acción esperada:
 
-- usar endpoint `POST /documents/`
-- incluir `x-api-key` e `idempotency-key`
+- usar endpoint `POST /api/v1/documents`
+- incluir `x-api-key` e `idempotency-key` (UUID, obligatorio)
 - usar `code_sii: "33"`
 - construir `data_dte_json` con `Encabezado` y `Detalle`
 - basarse en los campos de factura 33
@@ -140,7 +150,7 @@ Acción esperada:
 Usuario: "Qué endpoint uso para saber el último folio disponible del tipo 52?"
 Acción esperada:
 
-- usar `GET /numerations/last-used-number?code_sii=52`
+- usar `GET /api/v1/numerations/last-used-number?code_sii=52`
 - explicar query param y header `x-api-key`
 
 **Ejemplo 3:**
@@ -152,11 +162,20 @@ Acción esperada:
 - comparar contra los campos del archivo local de boleta 39
 - señalar faltantes o inconsistencias concretas
 
+**Ejemplo 4:**
+Usuario: "Quiero que cuando me queden 20 facturas se pidan 100 folios más automáticamente."
+Acción esperada:
+
+- usar `PATCH /api/v1/numerations/low-stock`
+- incluir `x-api-key` e `idempotency-key` (obligatorio)
+- body `{"items":[{"code_sii":"33","threshold":20,"request_quantity":100}]}` con `code_sii` como string
+- explicar que fusiona por código y que la respuesta trae la configuración completa
+
 ## Referencias locales
 
 Lee solo lo necesario:
 
-- `references/endpoints.md`: resumen de endpoints y headers del Postman
+- `references/endpoints.md`: endpoints de la API pública por categoría, headers, payloads y errores
 - `references/documentos.md`: mapa entre `code_sii`, markdowns SII y ejemplos JSON
 
 Si necesitas profundidad de campos SII, consulta directamente estos archivos del repo:

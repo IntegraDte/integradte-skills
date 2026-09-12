@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Necesito emitir una factura electrónica 33 en integradte.cl. Dame el endpoint, headers y un payload JSON base usando user_id, business_id y data_dte_json.",
-      "expected_output": "Debe usar POST /documents/, incluir x-api-key e idempotency-key, code_sii 33 y un payload coherente con factura 33.",
+      "expected_output": "Debe usar POST /api/v1/documents, incluir x-api-key e idempotency-key (UUID obligatorio; sin él la API responde 400), code_sii 33 y un payload coherente con factura 33.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "Qué endpoint uso para consultar el último folio usado de una guía de despacho 52 en IntegraDTE y qué parámetro tengo que mandar?",
-      "expected_output": "Debe responder GET /numerations/last-used-number?code_sii=52 e indicar el header x-api-key.",
+      "expected_output": "Debe responder GET /api/v1/numerations/last-used-number?code_sii=52 e indicar el header x-api-key.",
       "files": []
     },
     {
@@ -22,7 +22,7 @@
     {
       "id": 4,
       "prompt": "Dame un ejemplo para emitir una factura exenta 34 en IntegraDTE. Quiero método, endpoint, headers y body mínimo con data_dte_json.",
-      "expected_output": "Debe usar POST /documents/, code_sii 34 y un payload mínimo coherente con factura exenta 34.",
+      "expected_output": "Debe usar POST /api/v1/documents con x-api-key e idempotency-key obligatorio, code_sii 34 y un payload mínimo coherente con factura exenta 34.",
       "files": []
     },
     {
@@ -34,7 +34,7 @@
     {
       "id": 6,
       "prompt": "Ayúdame con una nota de crédito 61 para IntegraDTE. Necesito endpoint, headers y ejemplo JSON razonable para anular parcialmente una factura.",
-      "expected_output": "Debe usar POST /documents/, code_sii 61 y apoyarse en los ejemplos/estructura de nota de crédito 61.",
+      "expected_output": "Debe usar POST /api/v1/documents, code_sii 61 y apoyarse en los ejemplos/estructura de nota de crédito 61.",
       "files": []
     },
     {
@@ -46,37 +46,49 @@
     {
       "id": 8,
       "prompt": "Tengo que modificar un documento ya emitido en IntegraDTE. Qué endpoint uso y cómo sería el body si actualizo el data_dte_json?",
-      "expected_output": "Debe indicar PUT /documents/{id} y explicar que el identificador real reemplaza {id}, con body basado en data_dte_json.",
+      "expected_output": "Debe indicar PUT /api/v1/documents/:id y explicar que el identificador real reemplaza :id, con body basado en data_dte_json. Debe exigir idempotency-key y recomendar un UUID nuevo en cada intento.",
       "files": []
     },
     {
       "id": 9,
       "prompt": "Qué endpoint de IntegraDTE me da las estadísticas de documentos y qué header necesita?",
-      "expected_output": "Debe responder GET /documents/stats y mencionar x-api-key.",
+      "expected_output": "Debe responder GET /api/v1/documents/stats y mencionar x-api-key.",
       "files": []
     },
     {
       "id": 10,
       "prompt": "Necesito cargar un CAF en IntegraDTE. Dime el endpoint correcto y explícame qué debería validar antes de subirlo.",
-      "expected_output": "Debe usar PUT /numerations y explicar validaciones previas razonables para CAF y numeración.",
+      "expected_output": "Debe usar PUT /api/v1/numerations con x-api-key e idempotency-key obligatorio, y explicar validaciones previas razonables para CAF y numeración.",
       "files": []
     },
     {
       "id": 11,
       "prompt": "Cómo consulto la información del certificado digital en IntegraDTE? Quiero el endpoint y los headers mínimos.",
-      "expected_output": "Debe responder GET /business/certificate-info y mencionar x-api-key. Debe aclarar que la respuesta es solo has_valid_certificate (true/false) y que la API no entrega el certificado, su contraseña ni la llave privada.",
+      "expected_output": "Debe responder GET /api/v1/business/certificate-info y mencionar x-api-key. Debe aclarar que la respuesta es solo has_valid_certificate (true/false) y que la API no entrega el certificado, su contraseña ni la llave privada.",
       "files": []
     },
     {
       "id": 12,
       "prompt": "Necesito generar un PDF de un documento desde IntegraDTE. Qué endpoint usarías y qué me advertirías revisar antes de integrarlo?",
-      "expected_output": "Debe usar POST /pdfs/generate y dar advertencias razonables sobre payload/identificación del documento.",
+      "expected_output": "Debe usar POST /api/v1/pdfs/generate y dar advertencias razonables sobre payload/identificación del documento.",
       "files": []
     },
     {
       "id": 13,
       "prompt": "Quiero emitir una liquidación factura 43 en integradte.cl. Ayúdame con el payload.",
       "expected_output": "Debe indicar claramente que la skill actual no soporta DTE 43 y no debe inventar un payload para ese tipo.",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "En IntegraDTE quiero que, cuando me queden 20 folios de factura 33 o menos, se pidan 100 folios nuevos automáticamente, y lo mismo para boletas 39 con 50 y 500. Cómo lo configuro?",
+      "expected_output": "Debe usar PATCH /api/v1/numerations/low-stock con x-api-key e idempotency-key obligatorio (UUID; sin él responde 400). Body items con code_sii como string (\"33\", \"39\"), threshold y request_quantity en cada item (20/100 y 50/500). Debe explicar que fusiona por code_sii, que threshold acepta 0 y request_quantity es >= 1, y que la respuesta trae la configuración completa con null en la mitad faltante de un código configurado a medias. No debe usar POST /api/v1/numerations/request ni PUT /api/v1/businesses/:id.",
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "Cómo veo en IntegraDTE cuánto llevo consumido este mes de mi plan y si ya cedí la factura con id 67b111a6c1f0e36f7f4a0101?",
+      "expected_output": "Debe usar GET /api/v1/consumption para el consumo del ciclo (buckets documentos y consultas, limit 0 = ilimitado) y GET /api/v1/cessions?document_id=67b111a6c1f0e36f7f4a0101 para saber si el documento fue cedido, ambos con x-api-key. Debe mencionar que la lista de cesiones viene en data.cessions. No debe inventar endpoints.",
       "files": []
     }
   ]
