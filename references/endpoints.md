@@ -709,6 +709,8 @@ Otros codigos de `x-api-key`: `401 API_KEY_INVALID`, `403 API_KEY_NOT_ACTIVE`, `
 }
 ```
 
+Si el plan de la empresa no incluye lo pedido responde `403` con `code: "PLAN_FEATURE_NOT_INCLUDED"`: en `POST /api/v1/purchase-acknowledgments` (compras), en `POST /api/v1/cessions` (cesiones) y en `POST /api/v1/documents` cuando el plan no permite ese tipo DTE. Distinguir el caso por `code`, no por el texto de `message`.
+
 ### 400
 
 ```json
