@@ -30,11 +30,19 @@
         "CorreoRecep": "cliente@ejemplo.cl"
       },
       "Transporte": {
-        "RUTTrans": "11111111-1",
         "Patente": "ABCD12",
+        "PatenteCarro": "EFGH34",
+        "RUTTrans": "11111111-1",
+        "Chofer": {
+          "RUTChofer": "12000000-0",
+          "NombreChofer": "JUAN PEREZ SOTO"
+        },
         "DirDest": "BODEGA CLIENTE 789",
         "CmnaDest": "PUERTO MONTT",
-        "CiudadDest": "PUERTO MONTT"
+        "CiudadDest": "PUERTO MONTT",
+        "FchSalida": "2026-03-05",
+        "HraSalida": "08:30:00",
+        "FchLlegada": "2026-03-06"
       },
       "Totales": {
         "MntNeto": 45000,
